@@ -1,4 +1,4 @@
-# tfg-ddjj · Detección de anomalías patrimoniales en declaraciones juradas (2015-2024)
+# Detección de anomalías patrimoniales en declaraciones juradas (2015-2024)
 
 Prototipo del Trabajo Final de Grado (Licenciatura en Ciencia de Datos, Universidad Siglo 21).
 Pipeline ETL Bronce → Plata → Oro (esquema estrella en SQL Server), modelo no supervisado (PCA + DBSCAN) y panel en Power BI.
