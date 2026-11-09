@@ -1,0 +1,83 @@
+# configuración del pipeline
+proyecto:
+  semilla: 42
+  ejercicios: [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+
+rutas:                      
+  raw: data/raw
+  salidas: data/salidas
+  logs: logs
+  respaldo_local: C:/respaldos/ddjj
+  respaldo_externo: C:/respaldos_externo/ddjj
+  respaldo_nube: C:/Users/Gonzalo/OneDrive/respaldos/ddjj
+  auditoria: C:/auditoria/ddjj
+
+fuente:
+  patron_archivo: "declaraciones-juradas-{anio}.csv"
+  zip_url: "https://datos.jus.gob.ar/dataset/4680199f-6234-4262-8a2a-8f7993bf784d/resource/70ce68db-0af3-4922-94f9-d41be5ed38e2/download/declaraciones-juradas-2024.zip"
+  separador: ";"
+  codificacion: "utf-8-sig"   # los archivos tienen BOM
+  columnas_esperadas: 57
+  registros_esperados:
+    2015: 53438
+    2016: 50535
+    2017: 58073
+    2018: 58981
+    2019: 58849
+    2020: 60383
+    2021: 58958
+    2022: 61607
+    2023: 62605
+    2024: 62097
+
+bd:
+  servidor: localhost\MSSQLSERVER2022
+  base: ddjj
+  driver: "ODBC Driver 17 for SQL Server"   
+  autenticacion: windows        
+  trust_server_certificate: true
+  lote_insercion: 10000
+
+limpieza:
+  columnas_enteras: [dj_id, cuit, anio, tipo_declaracion_jurada_id, rectificativa, horas_dedicacion]
+  columna_fecha_aaaamm: desde
+  primer_importe: total_bienes_inicio   # desde esta columna hasta el final son importes
+  tipos_validos: [Anual, Inicial, Baja]
+  longitud_max_cargo: 400
+  longitud_max_funcionario: 200
+  # importes con formato inválido
+  invalidos_esperados:
+    total_bienes_inicio: 12
+    deudas_inicio: 1
+    total_bienes_final: 0
+    total_deudas_final: 0
+    diferencia_valuacion: 791
+    ingreso_neto_renta_sueldo_c1: 377
+    ingreso_neto_renta_capitales_c2: 405
+    total_ingresos_c3: 1109
+    total_ingreso_neto_c1234: 5410
+    ingresos_neto_gastos: 1562
+
+modelo:
+  varianza_minima: 0.80
+  dbscan:
+    eps: 0.15            
+    min_samples: 10 
+  silhouette_muestra: 20000
+  max_memoria_gb: 8        # tope estimado de memoria de DBSCAN
+
+evaluacion:
+  corte_temporal: 2019
+  n_submuestras: 10
+  fraccion: 0.8
+  max_puntos: 60000       # tope de puntos por ejercicio en el análisis de estabilidad
+  ejercicios_estabilidad: null   # null = todos o una lista, por ejemplo [2022, 2024]
+
+revision:
+  n_top: 50
+  n_control: 50
+
+respaldo:
+  certificado: cert_respaldo_ddjj
+  retener_completos: 5      # 4 semanales + el último de cierre de sprint
+  retener_diferenciales: 7

@@ -1,0 +1,10 @@
+.env
+__pycache__/
+.pytest_cache/
+data/raw/
+data/salidas/
+logs/
+*.bak
+*.pvk
+*.cer
+.ipynb_checkpoints/
